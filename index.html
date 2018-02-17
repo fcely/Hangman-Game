@@ -1,0 +1,319 @@
+
+
+<Doctype HTML!>
+
+
+<HTML>
+
+
+<Head>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</Head>
+
+<Body background="hang.jpg">
+
+   
+
+     
+
+<div class="container mt-6">
+
+
+        <div class="jumbotron" id="jumbo">
+            <div id="lifes"> <i></i></div>
+                <h1 class="display-4" id="hg"> <i class="fas fa-gamepad fa-spin"></i>  Welcome to  Hangman   </h1>
+                <p class="lead" id="picked">Select a topic from the drop down and click start to begin.</p>
+                <hr class="my-4">
+                <p id="clue"> </p>
+             
+             
+                
+                   
+                    <select class="dropdown btn btn-primary dropdown-toggle"  data-toggle="dropdown" id="topic"> 
+
+                        <option value="Cars">Cars</option>
+                        <option value="Movies">Movies</option>
+            
+                      </select>
+                        
+                
+                
+                      <p id="start_game_btn"class="lead mt-5">
+                        <a class="btn btn-primary btn-lg" href="#" role="button" id="btn-tag">New Game</a>
+                      </p>
+               
+                     
+                    </div>
+            
+               
+              
+            
+            
+</div>
+
+
+
+
+</Body>
+
+
+</HTML>
+
+
+<Script>
+
+
+
+var remaining_life=5;
+var found=0;
+var word_array=[];
+var word_control=[];
+var game_started=0
+var choices="";
+console.log("-----------------");
+
+
+
+var questions ={
+
+
+car:  ["Abarth",	"Acura",	"Alfa Romeo",	"AMC",	"Aston Martin",	"Audi",	"Austin",	"Austin-Healey",	"Bentley",	"BMW",	"Bufori",	"Bugatti",	"Buick",	"Cadillac",	"Chana",	"Changfeng",	"Chery",	"Chevrolet",	"Chrysler",	"Citroën",	"Dacia",	"Daewoo",	"Daihatsu",	"Dodge",	"Dongfeng",	"Elfin",	"Ferrari",	"Fiat",	"Ford",	"GM",	"GMC",	"GreatWall",	"Hafei",	"Haima",	"Holden",	"Honda",	"Hongqi",	"Hummer",	"Hyundai",	"Infiniti",	"Isuzu",	"Iveco",	"Jaguar",	"Jeep",	"Kia",	"Koenigsegg",	"Lada (AvtoVAZ)",	"Lamborghini",	"Lancia",	"Land Rover",	"Lexus",	"Leyland",	"Lincoln",	"Lotus",	"Mahindra",	"Maserati",	"Maybach",	"Mazda",	"McLaren",	"Mercedes-Benz",	"Mercury",	"MG",	"MINI",	"Mitsubishi",	"Mitsuoka",	"Morgan"] ,
+
+carClue:  ["Country of Origin: Italy",	"Country of Origin: Japan",	"Country of Origin: Italy",	"Country of Origin: United States",	"Country of Origin: United Kingdom",	"Country of Origin: Germany",	"Country of Origin: United Kingdom",	"Country of Origin: United Kingdom",	"Country of Origin: United Kingdom",	"Country of Origin: Germany",	"Country of Origin: United Kingdom",	"Country of Origin: France",	"Country of Origin: United States",	"Country of Origin: United States",	"Country of Origin: China",	"Country of Origin: China",	"Country of Origin: China",	"Country of Origin: United States",	"Country of Origin: United States",	"Country of Origin: France",	"Country of Origin: Romania",	"Country of Origin: South Korea",	"Country of Origin: Japan",	"Country of Origin: United States",	"Country of Origin: China",	"Country of Origin: Australia",	"Country of Origin: Italy",	"Country of Origin: Italy",	"Country of Origin: United Statess",	"Country of Origin: United States",	"Country of Origin: United States",	"Country of Origin: China",	"Country of Origin: China",	"Country of Origin: China",	"Country of Origin: Australia",	"Country of Origin: Japan",	"Country of Origin: China",	"Country of Origin: United States",	"Country of Origin: South Korea",	"Country of Origin: Japan",	"Country of Origin: Japan",	"Country of Origin: Italy",	"Country of Origin: United Kingdom",	"Country of Origin: United States",	"Country of Origin: South Korea",	"Country of Origin: Sweden",	"Country of Origin: Russia",	"Country of Origin: Italy",	"Country of Origin: Italy",	"Country of Origin: United Kingdom",	"Country of Origin: Japan",	"Country of Origin: United Kingdom",	"Country of Origin: United States",	"Country of Origin: United Kingdom",	"Country of Origin: India",	"Country of Origin: Italy",	"Country of Origin: Germany",	"Country of Origin: Japan",	"Country of Origin: United Kingdom",	"Country of Origin: Germany",	"Country of Origin: United States",	"Country of Origin: United Kingdom",	"Country of Origin: United Kingdom",	"Country of Origin: Japan",	"Country of Origin: Japan",	"Country of Origin: United Kingdom"],
+
+movies:  ["The Godfather","Forrest Gump","The Silence of the Lambs","Titanic"] ,
+
+movieClue:  ["Actors: Al Pacino, Marlon Brando, Robert Duvall,Initial Release: 1972, Directed by: Francis Ford Coppola", "1994 American epic romantic-comedy-drama film based on the 1986 novel of the same name by Winston Groom.","American thriller film that blends elements of the crime and horror genres. Directed by Jonathan Demme and starring Jodie Foster, Anthony Hopkins, and Scott Glenn, the film is based on Thomas Harris' 1988 novel","1997 American epic romantic disaster drama film directed, written, co-produced, and co-edited by James Cameron"],
+
+
+}
+
+
+
+
+
+window.onload = function() { // this function launch the start music and should pull information from the DB.  add option to create your own category
+        soundPlay("Victory");
+
+        console.log(questions.car[1])
+};
+
+
+
+$("#start_game_btn").click(function(){
+
+
+
+if (game_started===2) {
+    location.reload();
+}
+
+    game_started=1;
+
+    var topic = $("#topic").find(":selected").text()
+    
+    soundPlay("Funny");
+    $("#lifes").html("Life(s):"+remaining_life)
+    var word_control=[];
+    
+    if (topic==="Cars") {
+        var selection=Math.floor((Math.random() * questions.car.length));
+    var word=questions.car[selection];
+    var clue=questions.carClue[selection];
+    }
+    
+
+    if (topic==="Movies") {
+        var selection=Math.floor((Math.random() * questions.movies.length));
+    var word=questions.movies[selection];
+    var clue=questions.movieClue[selection];
+    }
+
+
+$("#clue").html(clue)
+    
+    var a =StringToArray(word);
+    $("#jumbo").css("background-color", "green")
+    PrintWord(" ")
+
+});
+
+
+
+function StringToArray(word) // This function runs at the begining and place the word into a string
+    {
+        word.length;
+        for(var i=0;i<word.length;i++)
+        {
+            word_array[i]=word.substr(i,1);
+            word_control[i]=0;
+            console.log(word_array[i]);
+        }
+    }
+
+
+
+  
+
+
+
+document.onkeyup = function FindLetterOnArray(event) // This function looks if the letter exists inside of the array 
+{
+    if(game_started===1) {
+    
+    letter=event.key;
+    var check=0;
+    var total=0;
+    var newletters = word_control.reduce(function(prev, cur) {return prev + cur; });
+    console.log("newletters"+newletters)
+
+    for(var i=0;i<word_array.length;i++)
+    {
+        
+        if (word_array[i].toLowerCase()===letter.toLowerCase()) 
+            {
+            word_control[i]=1;
+            
+            if  (newletters<word_control.reduce(function(prev, cur) {return prev + cur; })){
+            
+            found++;
+            check=1;
+            console.log(i);
+            console.log(found);
+            }
+            }    
+    }
+    
+    if (check===0) 
+    {
+        remaining_life=remaining_life-1;
+        console.log("remaining_life" + remaining_life);
+        $("#lifes").html("Life(s):"+remaining_life)
+
+        if(remaining_life===3){
+
+            $("#jumbo").css("background-color","red");
+            soundPlay("Suspense");
+        
+        }
+      
+    }
+
+
+    
+
+
+    if (found===word_array.length){
+        soundPlay("Victory");
+        $("#jumbo").css("background-color","green");
+        $("h1").attr("class","fa-spin")
+
+        $("#btn-tag").text("Well done!! Reload Page")
+        game_started=2;
+        
+        }
+
+if (remaining_life===0){
+
+alert("Game Over")
+location.reload();
+    
+}
+
+PrintWord(event.key)// this calls the printing function that keep track of the choices...
+
+    }
+
+   
+}
+
+
+function PrintWord(x)
+{
+
+
+    var text="";
+ 
+
+    for (i=0;i<word_array.length;i++)
+    {
+
+    if (word_control[i]===1)
+        {
+            text= text + word_array[i]
+        }
+    else
+        {
+        text=text+"_ ";
+        }
+
+}
+
+choices=choices+x+","
+console.log(text)
+console.log("choices:" + choices)
+$("#picked").html("Picked:" + choices);
+$("#hg").html(text);
+
+}
+
+
+
+
+var soundEmbed = false; // this function is used to play music.
+
+function soundPlay(which)
+    {
+    if (!soundEmbed)
+        {
+        soundEmbed = document.createElement("embed");
+        soundEmbed.setAttribute("src", which + ".mp3");
+        soundEmbed.setAttribute("id", "music");
+        //soundEmbed.setAttribute("hidden", true);
+        soundEmbed.setAttribute("autostart", true);
+        
+        }
+    else
+        {
+        document.body.removeChild(soundEmbed);
+        soundEmbed.removed = true;
+        soundEmbed = null;
+        soundEmbed = document.createElement("embed");
+        soundEmbed.setAttribute("src", which + ".mp3");
+        soundEmbed.setAttribute("id", "music");
+        //soundEmbed.setAttribute("hidden", true);
+        soundEmbed.setAttribute("autostart", true);
+        }
+    soundEmbed.removed = false;
+    document.body.appendChild(soundEmbed);
+    }
+
+
+
+
+
+
+
+
+</Script>
+
+
+<style>
+
+   
+
+    #music {
+        height: 10px;
+        width:10px;    
+    }
+    
+    #lifes{
+        font-size: 30px;
+        
+    }
+    
+    </style>
